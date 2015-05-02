@@ -6,6 +6,11 @@
             [ajax.core :refer [GET POST]])
   (:require-macros [secretary.core :refer [defroute]]))
 
+
+;; Event schema
+
+(defonce app-state (atom {:events []}))
+
 (defn navbar []
       [:div.navbar.navbar-inverse.navbar-fixed-top
        [:div.container
@@ -19,11 +24,21 @@
            [:a {:on-click #(secretary/dispatch! "#/about")} "About"]]]]]])
 
 (defn about-page []
-  [:div "this is the story of coop-monitor... work in progress"])
+  [:div "This is the harrowing tale of the coop monitor.
+        It came about in the fall of 2014, when I moved to a new house.
+        It is epic in every sense of the word."])
+
+
+(defn events-monitor []
+  [:div.events-monitor
+   [:h3 "Events"]
+   [:ul
+    (for [event (->> @app-state :events (take 5))]
+      [:li (str (:name event) ": " (:info event))])]])
 
 (defn home-page []
   [:div
-   [:h2 "Welcome to ClojureScript"]])
+   (events-monitor)])
 
 (def pages
   {:home #'home-page
