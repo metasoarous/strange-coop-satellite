@@ -33,8 +33,8 @@
   :uberjar-name "coop-monitor.jar"
   :jvm-opts ["-server"]
 
-;;enable to start the nREPL server when the application launches
-;:env {:repl-port 7001}
+  ;enable to start the nREPL server when the application launches
+  :env {:repl-port 7001}
 
   :main coop-monitor.core
 
