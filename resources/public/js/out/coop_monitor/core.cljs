@@ -49,10 +49,21 @@
     (for [{:keys [date time event info]} (->> @app-state :events (take 5))]
       [:tr [:td date] [:td time] [:td event] [:td info]])]])
 
+(defn egg-summary [chickens egg-data]
+  (let [chicken-egg-data (group-by :chicken egg-data)
+        chicken-to-counts (reduce
+                            (fn [ctc [c eds]]
+                              (assoc ctc c (apply + (map :eggs eds))))
+                            {}
+                            chicken-egg-data)]
+    (println "XXX" chicken-to-counts)
+    [:tr [:th "AVG"]
+     (for [c chickens]
+       [:td (chicken-to-counts c)])]))
+
 (defn egg-monitor []
   (let [egg-data (:egg-data @app-state)
-        chickens (->> egg-data (map :chicken) distinct sort)
-        chicken-index (into {} (map vector chickens (range)))]
+        chickens (->> egg-data (map :chicken) distinct sort)]
     [:div.egg-monitor
      [:h3 "Eggs"]
      [:table.table
@@ -62,12 +73,17 @@
           [:tr [:td date]
            (for [chicken chickens]
              (let [egg-count (-> date-data (get chicken) first :eggs (or 0))]
-               [:td egg-count]))]))]]))
+               [:td egg-count]))]))
+      [egg-summary chickens egg-data]
+      ]
+     ]))
 
 (defn home-page []
   [:div
    [events-monitor]
-   [egg-monitor]])
+   [egg-monitor]
+   ;[egg-summary [] []]
+   ])
 
 (def pages
   {:home #'home-page
